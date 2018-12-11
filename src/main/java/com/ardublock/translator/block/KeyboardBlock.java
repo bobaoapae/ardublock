@@ -4,11 +4,13 @@ import com.ardublock.translator.Translator;
 import com.ardublock.translator.block.exception.SocketNullException;
 import com.ardublock.translator.block.exception.SubroutineNotDeclaredException;
 
-public class KeyboardBlock  extends TranslatorBlock {
+public class KeyboardBlock extends TranslatorBlock
+{
 	public KeyboardBlock(Long blockId, Translator translator, String codePrefix, String codeSuffix, String label)
 	{
 		super(blockId, translator, codePrefix, codeSuffix, label);
 	}
+	
 	@Override
 	public String toCode() throws SocketNullException, SubroutineNotDeclaredException
 	{
@@ -22,7 +24,6 @@ public class KeyboardBlock  extends TranslatorBlock {
 		translator.addHeaderFile("PS2Keyboard.h");
 		translator.addSetupCommand("delay(1000);"
 				+ "keyboard.brancher(DataPin, IRQpin);"
-
 				+ "Serial.begin(9600);");
 		
 		translator.addDefinitionCommand("// Pin keyboard\n"
@@ -30,8 +31,6 @@ public class KeyboardBlock  extends TranslatorBlock {
 				+ "const int IRQpin =  " + IRQpin + ";\n"
 				+ "PS2Keyboard keyboard;\n"	);
 		
-return "";
+		return "";
 	}
-	
-
 }

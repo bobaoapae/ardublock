@@ -4,6 +4,7 @@ import com.ardublock.translator.Translator;
 import com.ardublock.translator.block.exception.SocketNullException;
 import com.ardublock.translator.block.exception.SubroutineNotDeclaredException;
 
+// TODO:  Delete this block and use VariableFakeBlock instead?
 public class PIN_port extends TranslatorBlock
 {
 	public PIN_port(Long blockId, Translator translator, String codePrefix, String codeSuffix, String label)
@@ -14,8 +15,6 @@ public class PIN_port extends TranslatorBlock
 	@Override
 	public String toCode() throws SocketNullException, SubroutineNotDeclaredException
 	{
-		
 		return codePrefix + label + codeSuffix;
 	}
-
 }

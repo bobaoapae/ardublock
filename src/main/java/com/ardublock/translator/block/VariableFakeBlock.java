@@ -2,6 +2,7 @@ package com.ardublock.translator.block;
 
 import com.ardublock.translator.Translator;
 
+// TODO:  Rename to something generic, since it may be used by multiple block types?
 public class VariableFakeBlock extends TranslatorBlock
 {
 	public VariableFakeBlock(Long blockId, Translator translator, String codePrefix, String codeSuffix, String label)
@@ -12,9 +13,14 @@ public class VariableFakeBlock extends TranslatorBlock
 	@Override
 	public String toCode()
 	{
-		String internalVariableName = translator.getNumberVariable(label);
-		internalVariableName = "vec_"+label.replace(" ","");
-		return codePrefix+internalVariableName+codeSuffix;
+		// If the variable is new...
+		if (!translator.doesVariableExist(label))
+		{
+			// Remember it.
+			translator.addVariable(label);
+		}
+		
+		// Form the C code.
+		return codePrefix + label + codeSuffix;
 	}
-
 }

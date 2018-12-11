@@ -31,13 +31,14 @@ public class TranslatorBlockFactory
 		shortClassName.put("noTone", "com.ardublock.translator.block.NoToneBlock");
 	}
 	
-	
 	public TranslatorBlock buildTranslatorBlock(Translator translator, Long blockId, String blockName, String codePrefix, String codeSuffix, String label)
 	{
 //		System.out.println("block name : " + blockName + " captured");
 		
 		String className = PropertiesReader.getValue(blockName, BLOCK_MAPPING);
-		//System.out.println("className: " + className);
+		
+//		System.out.println("className: " + className);
+
 		String longName = shortClassName.get(className);
 		if (longName != null)
 		{
@@ -51,19 +52,32 @@ public class TranslatorBlockFactory
 			TranslatorBlock ret = (TranslatorBlock)constructor.newInstance(blockId, translator, codePrefix, codeSuffix, label);
 			return ret;
 		}
-		catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		catch (IllegalArgumentException e)
+		{
+			e.printStackTrace(System.err);
+		}
+		catch (InstantiationException e)
+		{
+			e.printStackTrace(System.err);
+		}
+		catch (IllegalAccessException e)
+		{
+			e.printStackTrace(System.err);
+		}
+		catch (InvocationTargetException e)
+		{
+			e.printStackTrace(System.err);
+		}
+		catch (SecurityException e)
+		{
+			e.printStackTrace(System.err);
+		}
+		catch (NoSuchMethodException e)
+		{
+			e.printStackTrace(System.err);
+		}
+		catch (ClassNotFoundException e)
+		{
 			System.err.println(blockName + " not suitable class!");
 		}		
 

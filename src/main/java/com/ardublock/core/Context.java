@@ -3,21 +3,12 @@ package com.ardublock.core;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
+import java.util.Arrays;
 
 import processing.app.Editor;
 
@@ -25,7 +16,6 @@ import com.ardublock.ui.listener.OpenblocksFrameListener;
 
 import edu.mit.blocks.codeblocks.Block;
 import edu.mit.blocks.controller.WorkspaceController;
-import edu.mit.blocks.renderable.BlockUtilities;
 import edu.mit.blocks.renderable.FactoryRenderableBlock;
 import edu.mit.blocks.renderable.RenderableBlock;
 import edu.mit.blocks.workspace.FactoryManager;
@@ -49,10 +39,10 @@ public class Context
 	private Set<OpenblocksFrameListener> ofls;
 	private boolean isInArduino = false;
 	private String arduinoVersionString = ARDUINO_VERSION_UNKNOWN;
-	private OsType osType; 
+	private OsType osType;
 
-	final public static String APP_NAME = "ArduBlock";
-	
+	final public static String APP_NAME = "ArduBlock Education Edition";
+//	final public static String VERSION_STRING = " ";
 	private Editor editor;
 	
 	public enum OsType
@@ -65,8 +55,6 @@ public class Context
 	
 	private String saveFilePath;
 	private String saveFileName;
-	
-	//final public static String VERSION_STRING = " ";
 	
 	public static Context getContext()
 	{
@@ -89,7 +77,7 @@ public class Context
 	private Context()
 	{
 		workspaceController = new WorkspaceController();
-		resetWorksapce();
+		resetWorkspace();
 		workspace = workspaceController.getWorkspace();
 		workspaceChanged = false;
 		highlightBlockSet = new HashSet<RenderableBlock>();
@@ -101,22 +89,14 @@ public class Context
 		osType = determineOsType();
 	}
 	
-	public void resetWorksapce()
+	public void resetWorkspace()
 	{
-		/*
-		 * workspace = new Workspace(); workspace.reset(); workspace.setl
-		 */
-
 		// Style list
 		List<String[]> list = new ArrayList<String[]>();
 		String[][] styles = {};
-		
-		//		{ "//BlockGenus[@name[starts-with(.,\"Tinker\")]]/@color", "128 0 0" },
-		//		{ "//BlockGenus[@name[starts-with(.,\"df_\")]]/@color",	"0 128 0" } };
 
-		for (String[] style : styles) {
-			list.add(style);
-		}
+		list.addAll(Arrays.asList(styles));
+		
 		workspaceController.resetWorkspace();
 		workspaceController.resetLanguage();
 		workspaceController.setLangResourceBundle(ResourceBundle.getBundle("com/ardublock/block/ardublock"));
@@ -132,62 +112,32 @@ public class Context
 		workspaceEmpty = true;
 	}
 	
+	/**
+	 * Creates the default Arduino program we see when the program starts.
+	 */
 	private void loadDefaultArdublockProgram()
 	{
-		/*
-		InputStream defaultArdublockProgram = this.getClass().getResourceAsStream(DEFAULT_ARDUBLOCK_PROGRAM_PATH);
-		
-		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        final DocumentBuilder builder;
-        final Document doc;
-		try
-		{
-			builder = factory.newDocumentBuilder();
-			doc = builder.parse(defaultArdublockProgram);
-			final Element projectRoot = doc.getDocumentElement();
-			workspaceController.resetWorkspace();
-			workspaceController.loadProjectFromElement(projectRoot);
-		}
-		catch (ParserConfigurationException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (SAXException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IllegalArgumentException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			workspaceController.loadFreshWorkspace();
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			workspaceController.loadFreshWorkspace();
-		}
-        */
-		
 		Workspace workspace = workspaceController.getWorkspace();
 		Page page = workspace.getPageNamed("Main");
-		
+
 		FactoryManager manager = workspace.getFactoryManager();
-		Block newBlock;
-        newBlock = new Block(workspace, "loop", false);
-        FactoryRenderableBlock factoryRenderableBlock = new FactoryRenderableBlock(workspace, manager, newBlock.getBlockID());
-        RenderableBlock renderableBlock = factoryRenderableBlock.createNewInstance();
-        renderableBlock.setLocation(100, 100);
-        page.addBlock(renderableBlock);
-        
-        
+		
+		// Add a "setup" block.
+		Block newBlock = new Block(workspace, "setup", false);
+		FactoryRenderableBlock factoryRenderableBlock = new FactoryRenderableBlock(workspace, manager, newBlock.getBlockID());
+		RenderableBlock renderableBlock = factoryRenderableBlock.createNewInstance();
+		renderableBlock.setLocation(100, 50);
+		page.addBlock(renderableBlock);
+		
+		// Add a "loop" block.
+		newBlock = new Block(workspace, "loop", false);
+		factoryRenderableBlock = new FactoryRenderableBlock(workspace, manager, newBlock.getBlockID());
+		renderableBlock = factoryRenderableBlock.createNewInstance();
+		renderableBlock.setLocation(100, 100);
+		page.addBlock(renderableBlock);
 	}
 	
-	//determine OS
+	// determine OS
 	private OsType determineOsType()
 	{
 		String osName = System.getProperty("os.name");
@@ -223,7 +173,8 @@ public class Context
 		return new File(workingDir, name);
 	}
 
-	public WorkspaceController getWorkspaceController() {
+	public WorkspaceController getWorkspaceController()
+	{
 		return workspaceController;
 	}
 	
@@ -237,7 +188,8 @@ public class Context
 		return workspaceChanged;
 	}
 
-	public void setWorkspaceChanged(boolean workspaceChanged) {
+	public void setWorkspaceChanged(boolean workspaceChanged)
+	{
 		this.workspaceChanged = workspaceChanged;
 	}
 	
@@ -287,32 +239,39 @@ public class Context
 		}
 	}
 	
-	public void setEditor(Editor e) {
+	public void setEditor(Editor e)
+	{
 		editor = e;
 	}
 	
-	public Editor getEditor() {
+	public Editor getEditor()
+	{
 		return editor;
 	}
 	
 	
-	public boolean isInArduino() {
+	public boolean isInArduino()
+	{
 		return isInArduino;
 	}
 
-	public void setInArduino(boolean isInArduino) {
+	public void setInArduino(boolean isInArduino)
+	{
 		this.isInArduino = isInArduino;
 	}
 
-	public String getArduinoVersionString() {
+	public String getArduinoVersionString()
+	{
 		return arduinoVersionString;
 	}
 
-	public void setArduinoVersionString(String arduinoVersionString) {
+	public void setArduinoVersionString(String arduinoVersionString)
+	{
 		this.arduinoVersionString = arduinoVersionString;
 	}
 
-	public OsType getOsType() {
+	public OsType getOsType()
+	{
 		return osType;
 	}
 
@@ -345,27 +304,33 @@ public class Context
 		}
 	}
 
-	public String getSaveFileName() {
+	public String getSaveFileName()
+	{
 		return saveFileName;
 	}
 
-	public void setSaveFileName(String saveFileName) {
+	public void setSaveFileName(String saveFileName)
+	{
 		this.saveFileName = saveFileName;
 	}
 
-	public String getSaveFilePath() {
+	public String getSaveFilePath()
+	{
 		return saveFilePath;
 	}
 
-	public void setSaveFilePath(String saveFilePath) {
+	public void setSaveFilePath(String saveFilePath)
+	{
 		this.saveFilePath = saveFilePath;
 	}
 
-	public boolean isWorkspaceEmpty() {
+	public boolean isWorkspaceEmpty()
+	{
 		return workspaceEmpty;
 	}
 
-	public void setWorkspaceEmpty(boolean workspaceEmpty) {
+	public void setWorkspaceEmpty(boolean workspaceEmpty)
+	{
 		this.workspaceEmpty = workspaceEmpty;
 	}
 }
